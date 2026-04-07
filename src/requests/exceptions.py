@@ -118,7 +118,17 @@ class InvalidProxyURL(InvalidURL):
 
 
 class ChunkedEncodingError(RequestException):
-    """The server declared chunked encoding but sent an invalid chunk."""
+    """The server declared chunked encoding but sent an invalid chunk.
+    
+    This error commonly occurs due to transient network issues such as
+    connection resets, network timeouts, or other temporary connectivity
+    problems. When this exception is raised, it often indicates that the
+    connection was interrupted while receiving chunked data from the server.
+    
+    Applications should implement retry logic when handling this exception,
+    as the underlying network issue is typically temporary and subsequent
+    requests may succeed.
+    """
 
 
 class ContentDecodingError(RequestException, BaseHTTPError):
