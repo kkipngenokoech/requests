@@ -182,9 +182,23 @@ class HTTPDigestAuth(AuthBase):
         entdig = None
         p_parsed = urlparse(url)
         #: path is request-uri defined in RFC 2616 which should not be empty
-        path = p_parsed.path or "/"
-        if p_parsed.query:
-            path += f"?{p_parsed.query}"
+        # Extract the path and query from the original URL to preserve semicolons
+        # The urlparse.path may truncate at semicolons, so we need to extract
+        # the path+query portion manually from the original URL
+        scheme_and_netloc = f"{p_parsed.scheme}://{p_parsed.netloc}"
+        if scheme_and_netloc in url:
+            # Extract everything after the netloc (path + query + fragment)
+            path_start = url.find(scheme_and_netloc) + len(scheme_and_netloc)
+            path_and_query = url[path_start:]
+            # Remove fragment if present (everything after #)
+            if '#' in path_and_query:
+                path_and_query = path_and_query.split('#')[0]
+            path = path_and_query or "/"
+        else:
+            # Fallback to original logic if URL parsing fails
+            path = p_parsed.path or "/"
+            if p_parsed.query:
+                path += f"?{p_parsed.query}"
 
         A1 = f"{self.username}:{realm}:{self.password}"
         A2 = f"{method}:{path}"
