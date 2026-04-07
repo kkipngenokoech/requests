@@ -66,6 +66,20 @@ def _basic_auth_str(username, password):
     return authstr
 
 
+def _encode_credential_to_utf8(credential):
+    """Encode a credential to UTF-8 bytes if it's a Unicode string."""
+    if isinstance(credential, str):
+        return credential.encode('utf-8')
+    return credential
+
+
+def _decode_credential_from_utf8(credential):
+    """Decode a credential from UTF-8 bytes to Unicode string for display."""
+    if isinstance(credential, bytes):
+        return credential.decode('utf-8')
+    return credential
+
+
 class AuthBase:
     """Base class that all auth implementations derive from"""
 
@@ -108,8 +122,8 @@ class HTTPDigestAuth(AuthBase):
     """Attaches HTTP Digest Authentication to the given Request object."""
 
     def __init__(self, username, password):
-        self.username = username
-        self.password = password
+        self.username = _encode_credential_to_utf8(username)
+        self.password = _encode_credential_to_utf8(password)
         # Keep state in per-thread local storage
         self._thread_local = threading.local()
 
@@ -186,7 +200,10 @@ class HTTPDigestAuth(AuthBase):
         if p_parsed.query:
             path += f"?{p_parsed.query}"
 
-        A1 = f"{self.username}:{realm}:{self.password}"
+        username_str = _decode_credential_from_utf8(self.username)
+        password_str = _decode_credential_from_utf8(self.password)
+        
+        A1 = f"{username_str}:{realm}:{password_str}"
         A2 = f"{method}:{path}"
 
         HA1 = hash_utf8(A1)
@@ -219,7 +236,7 @@ class HTTPDigestAuth(AuthBase):
 
         # XXX should the partial digests be encoded too?
         base = (
-            f'username="{self.username}", realm="{realm}", nonce="{nonce}", '
+            f'username="{username_str}", realm="{realm}", nonce="{nonce}", '
             f'uri="{path}", response="{respdig}"'
         )
         if opaque:
