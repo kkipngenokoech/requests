@@ -110,6 +110,18 @@ class HTTPDigestAuth(AuthBase):
     def __init__(self, username, password):
         self.username = username
         self.password = password
+        
+        # Store UTF-8 encoded versions for digest calculations
+        if isinstance(username, str):
+            self._username_utf8 = username.encode('utf-8')
+        else:
+            self._username_utf8 = username
+            
+        if isinstance(password, str):
+            self._password_utf8 = password.encode('utf-8')
+        else:
+            self._password_utf8 = password
+            
         # Keep state in per-thread local storage
         self._thread_local = threading.local()
 
@@ -186,7 +198,11 @@ class HTTPDigestAuth(AuthBase):
         if p_parsed.query:
             path += f"?{p_parsed.query}"
 
-        A1 = f"{self.username}:{realm}:{self.password}"
+        # Use UTF-8 encoded bytes for digest calculation
+        username_for_digest = self._username_utf8.decode('utf-8') if isinstance(self._username_utf8, bytes) else self._username_utf8
+        password_for_digest = self._password_utf8.decode('utf-8') if isinstance(self._password_utf8, bytes) else self._password_utf8
+        
+        A1 = f"{username_for_digest}:{realm}:{password_for_digest}"
         A2 = f"{method}:{path}"
 
         HA1 = hash_utf8(A1)
@@ -217,9 +233,12 @@ class HTTPDigestAuth(AuthBase):
 
         self._thread_local.last_nonce = nonce
 
+        # Use original string username for header construction to avoid b'...' representation
+        username_for_header = self.username
+        
         # XXX should the partial digests be encoded too?
         base = (
-            f'username="{self.username}", realm="{realm}", nonce="{nonce}", '
+            f'username="{username_for_header}", realm="{realm}", nonce="{nonce}", '
             f'uri="{path}", response="{respdig}"'
         )
         if opaque:
