@@ -86,9 +86,11 @@ class SessionRedirectMixin(object):
         """Receives a Response. Returns a generator of Responses."""
 
         i = 0
+        # Track the current request to use for subsequent redirects
+        current_request = req
 
         while resp.is_redirect:
-            prepared_request = req.copy()
+            prepared_request = current_request.copy()
 
             resp.content  # Consume socket so it can be released
 
@@ -99,7 +101,7 @@ class SessionRedirectMixin(object):
             resp.close()
 
             url = resp.headers['location']
-            method = req.method
+            method = current_request.method
 
             # Handle redirection without scheme (see: RFC 1808 Section 4)
             if url.startswith('//'):
@@ -156,7 +158,7 @@ class SessionRedirectMixin(object):
 
             if 'Authorization' in headers:
                 # If we get redirected to a new host, we should strip out any
-                # authentication headers.
+                # authentication headers.
                 original_parsed = urlparse(resp.request.url)
                 redirect_parsed = urlparse(url)
 
@@ -179,6 +181,9 @@ class SessionRedirectMixin(object):
             )
 
             extract_cookies_to_jar(self.cookies, prepared_request, resp.raw)
+
+            # Update current_request to be the prepared_request for next iteration
+            current_request = prepared_request
 
             i += 1
             yield resp
