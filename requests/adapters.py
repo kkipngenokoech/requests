@@ -386,9 +386,6 @@ class HTTPAdapter(BaseAdapter):
                     # All is well, return the connection to the pool.
                     conn._put_conn(low_conn)
 
-        except socket.error as sockerr:
-            raise ConnectionError(sockerr, request=request)
-
         except MaxRetryError as e:
             raise ConnectionError(e, request=request)
 
@@ -402,5 +399,8 @@ class HTTPAdapter(BaseAdapter):
                 raise Timeout(e, request=request)
             else:
                 raise
+
+        except socket.error as sockerr:
+            raise ConnectionError(sockerr, request=request)
 
         return self.build_response(request, resp)
