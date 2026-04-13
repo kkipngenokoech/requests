@@ -425,7 +425,11 @@ class Session(SessionRedirectMixin):
             If Tuple, ('cert', 'key') pair.
         """
 
-        method = builtin_str(method)
+        # Handle binary strings properly in Python 3
+        if isinstance(method, bytes):
+            method = method.decode('utf-8')
+        else:
+            method = builtin_str(method)
 
         # Create the Request.
         req = Request(
