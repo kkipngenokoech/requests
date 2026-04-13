@@ -86,9 +86,11 @@ class SessionRedirectMixin(object):
         """Receives a Response. Returns a generator of Responses."""
 
         i = 0
+        # Track the current request to preserve method changes from previous redirects
+        current_request = req
 
         while resp.is_redirect:
-            prepared_request = req.copy()
+            prepared_request = current_request.copy()
 
             resp.content  # Consume socket so it can be released
 
@@ -136,6 +138,9 @@ class SessionRedirectMixin(object):
                 method = 'GET'
 
             prepared_request.method = method
+
+            # Update current_request to preserve method changes for subsequent redirects
+            current_request = prepared_request
 
             # https://github.com/kennethreitz/requests/issues/1084
             if resp.status_code not in (codes.temporary, codes.resume):
