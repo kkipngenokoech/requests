@@ -389,7 +389,7 @@ class HTTPAdapter(BaseAdapter):
         except socket.error as sockerr:
             raise ConnectionError(sockerr, request=request)
 
-        except MaxRetryError as e:
+        except (MaxRetryError, socket.error) as e:
             raise ConnectionError(e, request=request)
 
         except _ProxyError as e:
