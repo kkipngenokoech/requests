@@ -108,7 +108,11 @@ elif is_py3:
     from io import StringIO
     from collections import OrderedDict
 
-    builtin_str = str
+    def builtin_str(s):
+        if isinstance(s, bytes):
+            return s.decode('utf-8')
+        return str(s)
+    
     str = str
     bytes = bytes
     basestring = (str, bytes)
