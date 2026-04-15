@@ -86,9 +86,11 @@ class SessionRedirectMixin(object):
         """Receives a Response. Returns a generator of Responses."""
 
         i = 0
+        # Keep track of the current request to use for subsequent redirects
+        current_request = req
 
         while resp.is_redirect:
-            prepared_request = req.copy()
+            prepared_request = current_request.copy()
 
             resp.content  # Consume socket so it can be released
 
@@ -179,6 +181,10 @@ class SessionRedirectMixin(object):
             )
 
             extract_cookies_to_jar(self.cookies, prepared_request, resp.raw)
+
+            # Update current_request to use the prepared_request for the next iteration
+            # This ensures that method changes from redirects are preserved
+            current_request = prepared_request
 
             i += 1
             yield resp
