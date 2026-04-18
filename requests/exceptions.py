@@ -97,3 +97,11 @@ class StreamConsumedError(RequestException, TypeError):
 
 class RetryError(RequestException):
     """Custom retries logic failed"""
+
+
+class DecodeError(RequestException):
+    """Failed to decode response content due to encoding issues."""
+
+
+class TimeoutError(Timeout):
+    """A timeout error occurred during the request."""
