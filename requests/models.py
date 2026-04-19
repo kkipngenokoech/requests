@@ -149,7 +149,13 @@ class Request(object):
         hooks = hooks or {}
 
         for (k, v) in list(hooks.items()):
-            self.register_hook(event=k, hook=v)
+            if hasattr(v, '__iter__') and not isinstance(v, (str, bytes)):
+                # v is a list/iterable of hooks
+                for hook in v:
+                    self.register_hook(event=k, hook=hook)
+            else:
+                # v is a single hook
+                self.register_hook(event=k, hook=v)
 
         #: Session.
         self.session = session
