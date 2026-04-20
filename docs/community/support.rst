@@ -3,7 +3,7 @@
 Support
 =======
 
-If you have a questions or issues about Requests, there are several options:
+If you have questions or issues about Requests, there are several options:
 
 Send a Tweet
 ------------
@@ -15,7 +15,7 @@ If your question is less than 140 characters, feel free to send a tweet to
 File an Issue
 -------------
 
-If you notice some unexpected behavior in Requests, or want to see support
+If you notice some unexpected behaviour in Requests, or want to see support
 for a new feature,
 `file an issue on GitHub <https://github.com/kennethreitz/requests/issues>`_.
 
