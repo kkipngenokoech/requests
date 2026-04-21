@@ -11,6 +11,9 @@ Encoded Data?
 Requests automatically decompresses gzip-encoded responses, and does
 its best to decode response content to unicode when possible.
 
+When either the `brotli <https://pypi.org/project/Brotli/>`_ or `brotlicffi <https://pypi.org/project/brotlicffi/>`_
+package is installed, requests also decodes Brotli-encoded responses.
+
 You can get direct access to the raw response (and even the socket),
 if needed as well.
 
@@ -19,7 +22,8 @@ Custom User-Agents?
 -------------------
 
 Requests allows you to easily override User-Agent strings, along with
-any other HTTP Header.
+any other HTTP Header. See :ref:`documentation about headers <custom-headers>`.
+
 
 
 Why not Httplib2?
@@ -41,7 +45,7 @@ Chris Adams gave an excellent summary on
     for, oh, about 0.0001% of the awesomeness.
 
     1. http://code.google.com/p/httplib2/issues/detail?id=96 is a good example:
-    an annoying bug which affect many people, there was a fix available for
+    an annoying bug that affected many people, there was a fix available for
     months, which worked great when I applied it in a fork and pounded a couple
     TB of data through it, but it took over a year to make it into trunk and
     even longer to make it onto PyPI where any other project which required "
@@ -51,33 +55,36 @@ Chris Adams gave an excellent summary on
 Python 3 Support?
 -----------------
 
-Yes! Here's a list of Python platforms that are officially
-supported:
+Yes! Requests supports all `officially supported versions of Python <https://devguide.python.org/versions/>`_
+and recent releases of PyPy.
 
-* cPython 2.6
-* cPython 2.7
-* cPython 3.1
-* cPython 3.2
-* PyPy-c 1.4
-* PyPy-c 1.5
-* PyPy-c 1.6
-* PyPy-c 1.7
-
-
-Keep-alive Support?
--------------------
-
-Yep!
-
-
-Proxy Support?
---------------
-
-You bet!
-
-
-SSL Verification?
+Python 2 Support?
 -----------------
 
-Absolutely.
+No! As of Requests 2.28.0, Requests no longer supports Python 2.7. Users who
+have been unable to migrate should pin to `requests<2.28`. Full information
+can be found in `psf/requests#6023 <https://github.com/psf/requests/issues/6023>`_.
 
+It is *highly* recommended users migrate to a supported Python 3.x version now since
+Python 2.7 is no longer receiving bug fixes or security updates as of January 1, 2020.
+
+What are "hostname doesn't match" errors?
+-----------------------------------------
+
+These errors occur when :ref:`SSL certificate verification <verification>`
+fails to match the certificate the server responds with to the hostname
+Requests thinks it's contacting. If you're certain the server's SSL setup is
+correct (for example, because you can visit the site with your browser) and
+you're using Python 2.7, a possible explanation is that you need
+Server-Name-Indication.
+
+`Server-Name-Indication`_, or SNI, is an official extension to SSL where the
+client tells the server what hostname it is contacting. This is important
+when servers are using `Virtual Hosting`_. When such servers are hosting
+more than one SSL site they need to be able to return the appropriate
+certificate based on the hostname the client is connecting to.
+
+Python 3 already includes native support for SNI in their SSL modules.
+
+.. _`Server-Name-Indication`: https://en.wikipedia.org/wiki/Server_Name_Indication
+.. _`virtual hosting`: https://en.wikipedia.org/wiki/Virtual_hosting
