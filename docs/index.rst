@@ -8,7 +8,7 @@ Requests: HTTP for Humans
 
 Release v\ |version|. (:ref:`Installation <install>`)
 
-Requests is an :ref:`ISC Licensed <isc>` HTTP library, written in Python, for human beings.
+Requests is an :ref:`Apache2 Licensed <apache2>` HTTP library, written in Python, for human beings.
 
 Python's standard **urllib2** module provides most of
 the HTTP capabilities you need, but the API is thoroughly **broken**.
@@ -27,7 +27,7 @@ Things shouldn’t be this way. Not in Python.
     'utf-8'
     >>> r.text
     u'{"type":"User"...'
-    >>> r.json
+    >>> r.json()
     {u'private_gists': 419, u'total_private_repos': 77, ...}
 
 See `similar code, without Requests <https://gist.github.com/973705>`_.
@@ -38,13 +38,7 @@ Requests takes all of the work out of Python HTTP/1.1 — making your integrati
 Testimonials
 ------------
 
-`Kippt <http://kippt.com>`_, `Heroku <http://heroku.com>`_, `PayPal <https://www.paypal.com/>`_,
-`Transifex <https://www.transifex.net/>`_,
-`Native Instruments <http://www.native-instruments.com/>`_, `The Washington Post <http://www.washingtonpost.com/>`_,
-`Twitter, Inc <http://twitter.com>`_,
-`Readability <http://readability.com>`_, and
-Federal US Institutions
-use Requests internally. It has been installed over 100,000 times from PyPI.
+Her Majesty's Government, Amazon, Google, Twilio, Runscope, Mozilla, Heroku, PayPal, NPR, Obama for America, Transifex, Native Instruments, The Washington Post, Twitter, SoundCloud, Kippt, Readability, and Federal US Institutions use Requests internally. It has been downloaded over 8,000,000 times from PyPI.
 
 **Armin Ronacher**
     Requests is the perfect example how beautiful an API can be with the
@@ -79,6 +73,7 @@ Requests is ready for today's web.
 - Multipart File Uploads
 - Connection Timeouts
 - ``.netrc`` support
+- Python 2.6—3.3
 - Thread-safe.
 
 
@@ -96,6 +91,7 @@ instructions for getting the most out of Requests.
    user/install
    user/quickstart
    user/advanced
+   user/authentication
 
 
 Community Guide
@@ -124,8 +120,8 @@ this part of the documentation is for you.
    api
 
 
-Developer Guide
----------------
+Contributor Guide
+-----------------
 
 If you want to contribute to the project, this part of the documentation is for
 you.
@@ -133,6 +129,6 @@ you.
 .. toctree::
    :maxdepth: 1
 
-   dev/internals
+   dev/philosophy
    dev/todo
    dev/authors
